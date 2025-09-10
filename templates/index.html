@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Analysis - {{ symbol }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; }
+        .error { color: red; background: #ffe6e6; padding: 10px; }
+        .success { color: green; background: #e6ffe6; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Stock Analysis Dashboard - {{ symbol }}</h1>
+    
+    <!-- Debug Information -->
+    <div class="section">
+        <h2>Debug Info</h2>
+        <p>Income data items: {{ income|length if income else 0 }}</p>
+        <p>Metrics data items: {{ metrics|length if metrics else 0 }}</p>
+        <p>AI Predictions available: {{ 'Yes' if ai_predictions else 'No' }}</p>
+    </div>
+
+    <!-- AI Predictions Section -->
+    <div class="section">
+        <h2>🤖 AI Predictions</h2>
+        {% if ai_predictions %}
+            {% if ai_predictions.error %}
+                <div class="error">
+                    <strong>Error:</strong> {{ ai_predictions.error }}
+                </div>
+            {% elif ai_predictions.success %}
+                <div class="success">
+                    <p><strong>Current Price:</strong> ${{ ai_predictions.current_price }}</p>
+                    <p><strong>10-Year Prediction:</strong> ${{ ai_predictions.predicted_final_price }}</p>
+                    <p><strong>Expected Annual Return:</strong> {{ ai_predictions.annual_return }}%</p>
+                </div>
+                
+                <h3>Yearly Predictions:</h3>
+                <ul>
+                {% for pred in ai_predictions.predictions %}
+                    <li>Year {{ pred.year }} ({{ pred.date }}): ${{ pred.predicted_price }}</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <div class="error">Predictions failed to generate</div>
+            {% endif %}
+        {% else %}
+            <div class="error">No AI predictions available</div>
+        {% endif %}
+    </div>
+
+    <!-- Income Statement Section -->
+    <div class="section">
+        <h2>💰 Income Statement</h2>
+        {% if income %}
+            {% for item in income[:3] %}
+                <div style="margin-bottom: 15px; padding: 10px; background: #f5f5f5;">
+                    <h3>{{ item.date[:4] if item.date else 'Unknown Year' }}</h3>
+                    <p><strong>Revenue:</strong> ${{ "{:,.0f}".format(item.revenue|float) if item.revenue else 'N/A' }}</p>
+                    <p><strong>Net Income:</strong> ${{ "{:,.0f}".format(item.netIncome|float) if item.netIncome else 'N/A' }}</p>
+                    <p><strong>EPS:</strong> ${{ "%.2f"|format(item.eps|float) if item.eps else 'N/A' }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="error">No income statement data available</p>
+        {% endif %}
+    </div>
+
+    <!-- Key Metrics Section -->
+    <div class="section">
+        <h2>📊 Key Metrics</h2>
+        {% if metrics %}
+            {% for item in metrics[:3] %}
+                <div style="margin-bottom: 15px; padding: 10px; background: #f5f5f5;">
+                    <h3>{{ item.date[:4] if item.date else 'Unknown Year' }}</h3>
+                    <p><strong>P/E Ratio:</strong> {{ "%.2f"|format(item.peRatio|float) if item.peRatio else 'N/A' }}</p>
+                    <p><strong>Revenue Per Share:</strong> ${{ "%.2f"|format(item.revenuePerShare|float) if item.revenuePerShare else 'N/A' }}</p>
+                    <p><strong>Book Value Per Share:</strong> ${{ "%.2f"|format(item.bookValuePerShare|float) if item.bookValuePerShare else 'N/A' }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="error">No key metrics data available</p>
+        {% endif %}
+    </div>
+
+    <!-- Trend Comparison -->
+    {% if trend_comparison %}
+    <div class="section">
+        <h2>📈 Trend Analysis</h2>
+        <p><strong>Period:</strong> {{ trend_comparison.start_year }} → {{ trend_comparison.end_year }}</p>
+        <p><strong>Revenue Trend:</strong> {{ trend_comparison.revenue }}</p>
+        <p><strong>Net Income Trend:</strong> {{ trend_comparison.netIncome }}</p>
+        <p><strong>EPS Trend:</strong> {{ trend_comparison.eps }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Raw Data Debug (Remove in production) -->
+    <div class="section">
+        <h2>Raw Data Debug</h2>
+        <details>
+            <summary>Click to see raw data</summary>
+            <h4>Income Data (first item):</h4>
+            <pre>{{ income[0] if income else 'No data' }}</pre>
+            
+            <h4>Metrics Data (first item):</h4>
+            <pre>{{ metrics[0] if metrics else 'No data' }}</pre>
+            
+            <h4>AI Predictions:</h4>
+            <pre>{{ ai_predictions }}</pre>
+        </details>
+    </div>
+</body>
+</html>

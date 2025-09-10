@@ -1,0 +1,8 @@
+In the document which was written before the code finally worked the files might be incorrectly labeled because I might have forgotten to correct the renamed files 
+Here is a debrief of the correct content and in addition each python file has its own short comment description:
+
+original.py - this code is a "safe" code for me in case my new project code would crash
+app.py - this code is my retake project which is edited, working and corrected with an added ai model to predict 10 years of stock behaviour 
+test.py - was used to find a lost endpoint i couldn't remember the name of 
+test2.py - was used to experiment on the code in order to retrive data from api and train the ai in a safe space
+training_data_ai - is where the ai was officially trained and responds correctly.
